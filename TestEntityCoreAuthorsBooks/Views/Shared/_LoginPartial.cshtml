@@ -1,0 +1,39 @@
+﻿@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="submenu-manage">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <a asp-area="Identity" asp-page="/Account/Manage/Index" title="Profile">Hello @User.Identity?.Name!</a>
+        </li>
+        @if (User.IsInRole("User") && !User.IsInRole("Admin"))
+        {
+            <li class="nav-item">
+                <a asp-area="Identity" asp-controller="Users" asp-action="ListUsers">Users Data</a>
+            </li>
+        }
+        @if (User.IsInRole("Admin") || User.IsInRole("Super Admin"))
+        {
+            <li class="manageadmin">
+                <a href="" class="submenu-manage-link">Manage Admin</a>@*class="submenu-link"*@
+                <partial name="_AdministrationPartial" />
+            </li>
+        }
+        <li class="nav-item">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" method="post"
+              asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="nav-link btn btn-link">Logout</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+    }
+</ul>

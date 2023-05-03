@@ -1,0 +1,21 @@
+﻿.appdata:hover {
+    background-color: black;
+    transition: .5s ease-in-out;
+}
+
+.appdata ul {
+    display: none;
+}
+
+.appdata:hover ul {
+    display: block;
+    position: absolute;
+    margin-left: 180px;
+    margin-top: -45px;
+}
+
+.appdata ul li {
+    background-color: #ff1f00;
+    font-weight: 700;
+    width: 140px;
+}

@@ -1,0 +1,125 @@
+﻿@model TestEntityCoreAuthorsBooks.Models.ShowModel
+
+<div class="panel panel-default">
+    <div style="margin-bottom: 2%;" class="container-fluid">
+        <form class="row g-1" id="search-form" asp-action="Search" data-ajax="true"
+              data-ajax-method="GET" data-ajax-update="#ajax-show-list"
+              data-ajax-loading="#global-ajax-loading">
+
+            <div class="row">
+
+                <div class="col-sm-6 .col-lg-8">
+
+                    @Html.TextBox("term", null,
+                    new { @class = "form-control",
+                    id = "idInputSearch",
+                    placeholder = "search ...",
+                    style=""
+                    })
+
+
+                </div>
+                <div class="col-sm-2">
+                    <input type="submit" class="btn btn-primary" value="Search" />
+                </div>
+                <div class="col-sm-2">
+                    <select asp-for="ItemsPerPage" id="perpage" name="perpage" class="form-control"
+                            asp-items="Html.GetEnumSelectList<ItemsPerPage>()">
+                    </select>
+                </div>
+               
+                
+            </div>
+        </form>
+    </div>
+    <div class="panel-body" id="ajax-show-list">
+        @await Html.PartialAsync("_AuthorsList", Model)
+        @*@Html.Partial("_AuthorsList", Model)*@
+
+    </div>
+</div>
+
+@*@Html.Partial("_AuthorsPagedList", Model)*@
+
+<script type="text/javascript">
+    
+    //document.getElementById("idInputSearch").addEventListener("focusout", inputSearchChange);
+    document.getElementById("idInputSearch").addEventListener("input", inputSearchInput);
+    //document.getElementById("idClearInput").addEventListener("click", clearClick);
+    document.getElementById("perpage").addEventListener("change", changePerPage);
+    function changePerPage(){
+        console.log('changePerPage');
+        var s = document.getElementsByName("perpage");
+
+        //console.log("tableOnLoad");
+        //console.log(s);
+        var value = s[0].options[s[0].selectedIndex].text;
+        console.log(s[0].options[s[0].selectedIndex].text);
+        $.ajax({
+            url: 'Author/UpdatePerPage',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                text: value,
+            },
+
+            success: function (data) {
+
+                console.log('success');
+            },
+            error: function (data) {
+                console.log('err');
+            }
+        });
+    }
+    //function inputSearchChange() {
+    //    console.log('111111111111111');
+    //    var idSearch = document.getElementById("idInputSearch");
+    //    if (idSearch != null) {
+    //        console.log(idSearch.value);
+    //        var term = idSearch.value;
+    //        term = term.split(/[ ,]+/).join('%')
+    //        //alert(term);
+    //        $("#theTable").load("/Author/Search?term=" + term);
+    //    }
+
+
+
+    //}
+
+    function inputSearchInput() {
+        console.log('2222222222222');
+        let textSearch = document.getElementById("idInputSearch").value;
+        var idClear = document.getElementById("idClearInput");
+        if (textSearch != null && textSearch != '') {
+
+            if (idClear != null) {
+                idClear.style.display = 'block';
+            }
+        }
+        else if (textSearch != null && textSearch === '') {
+            if (idClear != null) {
+                idClear.style.display = 'none';
+            }
+        }
+    }
+
+    //function clearClick() {
+    //    console.log('3333333333333333');
+
+    //    var idSearch = document.getElementById("idInputSearch");
+    //    var idClear = document.getElementById("idClearInput");
+    //    if (idSearch != null) {
+    //        idSearch.value = '';
+    //        $("#theTable").load("/Author/Search");
+    //    }
+    //    if (idClear != null) {
+    //        idClear.style.display = 'none';
+    //    }
+
+    //}
+</script>
+
+@section Scripts{
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

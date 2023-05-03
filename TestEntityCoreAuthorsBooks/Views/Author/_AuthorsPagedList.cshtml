@@ -1,0 +1,59 @@
+﻿@using MvcPagedList.Core;
+@using TestEntityCoreAuthorsBooks.ProgrammData.DataExtensions;
+@model TestEntityCoreAuthorsBooks.Models.ShowModel
+
+@*<input type="hidden" id="customInput" data-value="@ViewBag.p" />*@
+
+@PagedList.Pager(
+    actionName: "PagerStep",
+
+    routeValues: new
+    {
+        term = Context.Request.Query["term"],
+        perpage = TempData.Get<string>("p"),
+    },
+
+    ajaxAttributes: new
+    {
+        data_ajax = "true",
+        data_ajax_loading = "#global-ajax-loading",
+        data_ajax_update = "#ajax-show-list",
+        data_ajax_method = "GET",
+        data_ajax_mode = "replace"
+    },
+
+    pagerOptions: new PagerOptions
+    { 
+        currentPage = Model.Page,
+        PageCount = Model.PageSize,
+        TotalItemCount = Model.TotalItemCount,
+        DisplayMode = PagedListDisplayMode.IfNeeded,
+        DisplayInfoArea = true,
+        LinkToNextPageFormat = "next",
+        LinkToPreviousPageFormat = "prev",
+        CurrentLocationFormat = "page",
+        PageCountFormat = "of",
+        TotalItemCountFormat = "total Entities",
+        LiElementClasses = "link-primary",
+        
+    },
+
+    controllerName: "Author",
+
+    areaName: ""
+
+)
+@{
+    object a = ViewBag.p;
+    
+    Console.WriteLine(a);
+}
+
+<script type="text/javascript">
+    //var s = document.getElementsByName("perpage");
+
+    //console.log("tableOnLoad");
+    //console.log(s);
+    //console.log(s[0].options[s[0].selectedIndex].text);
+
+</script>

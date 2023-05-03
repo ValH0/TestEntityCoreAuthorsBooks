@@ -1,0 +1,364 @@
+﻿@model TestEntityCoreAuthorsBooks.Models.ShowModel
+
+@{
+    string sortLastName = "LastName";
+}
+
+<style>
+    .delete, .search, .edit {
+        border-radius: 10px;
+        background-color: #4CAF50;
+        border: 1px solid green;
+        color: white;
+        padding: 8px 15px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        cursor: pointer;
+        float: left;
+        margin-left: 2%;
+    }
+
+        .delete .button:hover {
+            background-color: #3e8e41;
+        }
+</style>
+
+
+
+@if (Model.Authors.Count() == 0)
+{
+    <br />
+    <div class="alert alert-info">
+        No Author found
+    </div>
+}
+else
+{
+
+    <table id="theTable" class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>
+                    <form method="get" asp-action="Sort" style="float: left; margin-right: 3%;"
+                      asp-route-page="@Model.Page"
+                      asp-route-sortField="@sortLastName"
+                      asp-route-currentSortField="@ViewBag.SortField"
+                      asp-route-currentSortOrder="@ViewBag.SortOrder"
+                          data-ajax="true" data-ajax-success="sItems(this,@Model.Page)">
+                        <button class="button-as-link">Id</button>
+                    </form>
+                </th>
+                <th>
+                    <form method="get" asp-action="Sort" style="float: left; margin-right: 3%;"
+                      asp-route-page="@Model.Page"
+                      asp-route-sortField="@sortLastName"
+                      asp-route-currentSortField="@ViewBag.SortField"
+                      asp-route-currentSortOrder="@ViewBag.SortOrder"
+                          data-ajax="true" data-ajax-success="sItems(this,@Model.Page)">
+                        <button class="button-as-link">FirstName</button>
+                    </form>
+                </th>
+                <th>
+                    <form method="get" asp-action="Sort" style="float: left; margin-right: 3%;"
+                      asp-route-page="@Model.Page"
+                      asp-route-sortField="@sortLastName"
+                      asp-route-currentSortField="@ViewBag.SortField"
+                      asp-route-currentSortOrder="@ViewBag.SortOrder"
+                          data-ajax="true" data-ajax-success="sItems(this,@Model.Page)">
+                        <button class="button-as-link">LastName</button>
+                    </form>
+
+                </th>
+
+                <th style="margin-left: 10%; width: 350px;">
+                    Action
+                    <input id="idSortOrder" type="text" hidden value="@ViewBag.SortOrder">
+                    <input id="idSortField" type="text" hidden value="@ViewBag.SortField">
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Authors.Count(); i++)
+            {
+                <tr id="@Model.Authors[i].Id.ToString()tr">
+
+                    <td>@Model.Authors[i].Id</td>
+                    <td>@Model.Authors[i].FirstName</td>
+                    <td>@Model.Authors[i].LastName</td>
+                    <td>
+                        <ul>
+                            <li style="display: inline;">
+                                <form asp-action="Delete" style="float: left; margin-right: 3%;"
+                              asp-route-id="@Model.Authors[i].Id" asp-route-page="@Model.Page" data-ajax="true"
+                                      data-ajax-success="deleteItem(this,
+@Model.PageSize,
+@Model.RecordsPerPage,
+@Model.Page,
+@Model.TotalItemCount)">
+                                    <button type="submit" class="delete">
+                                        Delete
+                                    </button>
+                                    @*<button type="submit" class="delete" onClick="data-ajax-success="deleteItem(this)">
+                            Delete
+                            </button>*@
+                                </form>
+                                @* <button class="delete" onClick="deleteTodo(@item.Id)">
+                        Delete
+                        </button>*@
+                                <button type="submit"
+                                        onClick="reply_clickEdit(@Model.Authors[i].Id)" class="edit">
+                                    Edit
+                                </button>
+                                <button type="submit"
+                                        onClick="reply_clickSearch(@Model.Authors[i].Id)" class="search">
+                                    Show Books
+                                </button>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@*@await Html.PartialAsync("_AuthorsPagedList", Model)*@
+@Html.Partial("_AuthorsPagedList", Model)
+
+@{
+    int a = Model.RecordsPerPage;
+    Console.WriteLine(a);
+}
+
+<div id="searchResults">
+</div>
+
+<div id="editResults">
+</div>
+
+<script type="text/javascript">
+    //var s = document.getElementsByName("perpage");
+
+    //console.log("tableOnLoad");
+    //console.log(s);
+    //console.log(s[0].options[s[0].selectedIndex].text);
+    //@ViewData["JavaScriptFunction"] = s[0].options[s[0].selectedIndex].text;
+    //@(ViewBag.JavaScriptFunction) = s[0].options[s[0].selectedIndex].text;
+
+    var idForSearch = null;
+    function sItems(form, page) {
+
+        var nextElem = null,
+            sortField = null,
+            idSortOrder = null,
+            idSortField = null,
+            currentSortOrder = null,
+            currentSortField = null;
+
+        for (var i = 0; i < form.childNodes.length; i++) {
+            nextElem = form.childNodes[i];
+
+            if (nextElem.tagName === "BUTTON"
+                && nextElem.firstChild != null
+                && nextElem.firstChild.nodeValue != null) {
+                sortField = nextElem.firstChild.nodeValue;
+                idSortOrder = document.getElementById("idSortOrder");
+                if (idSortOrder != null) {
+                    currentSortOrder = idSortOrder.value;
+                }
+                idSortField = document.getElementById("idSortField");
+                if (idSortField != null) {
+                    currentSortField = idSortField.value;
+                }
+            }
+        }
+        console.log(idSortOrder);
+        console.log(idSortField);
+        console.log();
+        console.log('sortField=' + sortField);
+        console.log('page=' + page);
+        console.log('currentSortField=' + currentSortField);
+        console.log('currentSortOrder=' + currentSortOrder);
+        $("#theTable").load("/Author/Sort?page=" + page + "&sortField=" + sortField + "&currentSortField=" + currentSortField + "&currentSortOrder=" + currentSortOrder);
+        //$("#theTable").load("/Author/Sort?page=" + page);
+    }
+
+    function sortItems(form, sortField, currentSortField, currentSortOrder, page) {
+        console.log(currentSortField);
+        console.log(currentSortOrder);
+
+        //$("#theTable").load("/Author/Sort?page=" + page  + "&sortField=" + sortField + "&currentSortField=" + currentSortField + "&currentSortOrder=" + currentSortOrder);
+        $("#theTable").load("/Author/Sort?page=" + page);
+    }
+
+    function deleteItem(form, pageSize, recordsPerPage, page, totalItemCount) {
+
+        //$(form).parents('li').parent('ul').parent('td').parent('tr').remove();
+
+        $("#theTable").load("/Author/PagerStep?page=" + page);
+
+        //console.log('pageSize = ' + pageSize);
+        //console.log('recordsPerPage = ' + recordsPerPage);
+        //console.log('page = ' + page);
+        //console.log('totalItemCount = ' + totalItemCount);
+    }
+
+    $(window).on("mouseover", function () {
+        var tables = document.getElementsByClassName("table table-striped table-hover");
+        if (tables != null) {
+            if (tables.length > 1) {
+                tables[0].setAttribute('id', 'theTable1');
+                var content = $("#theTable1").contents();
+                $("#theTable1").replaceWith(content);
+            }
+        }
+        var pagers = document.getElementsByClassName("mp-pagination-nav");
+        if (pagers != null) {
+
+            if (pagers.length > 1) {
+
+                pagers[1].remove();
+            }
+        }
+    });
+
+    function onLiElemClick(){
+        console.log("onLiElemClick");
+        var s = document.getElementsByName("perpage");
+
+        //console.log("tableOnLoad");
+        //console.log(s);
+        var value = s[0].options[s[0].selectedIndex].text;
+        console.log(s[0].options[s[0].selectedIndex].text);
+        $.ajax({
+                url: 'Author/UpdatePerPage',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    text: value,
+                },
+                
+                success: function (data) {
+
+                    console.log('success');
+                },
+                error: function (data) {
+                    console.log('err');
+                }
+            });
+    }
+
+    $(window).on("mouseover", function () {
+
+        var pagers = document.getElementsByClassName("mp-pagination");
+        if (pagers != null && pagers[0] != null) {
+            for (var i = 0; i < pagers[0].childNodes.length; i++) {
+                var liElem = pagers[0].childNodes[i];
+                //console.log(liElem);
+                //console.log(liElem.childNodes[0]);
+                //console.log(liElem.childNodes[0]);
+                //var aElem = liElem.childNodes[0];
+                var className = liElem.getAttribute("class");
+                if (className != null && className === "link-primary") {
+                    liElem.hidden = true;
+                }
+                liElem.addEventListener("click", onLiElemClick, false);
+            }
+
+            for (var i = 0; i < pagers[0].childNodes.length; i++) {
+                var liElem = pagers[0].childNodes[i];
+                var className = liElem.getAttribute("class");
+
+                if (className != null && className === "link-primary is-active") {
+
+                    let nextElem = liElem.nextSibling;
+                    if (nextElem != null) {
+                        nextElem.hidden = false;
+                    }
+                    let prevElem = liElem.previousElementSibling;
+                    if (prevElem != null) {
+                        prevElem.hidden = false;
+                    }
+                }
+            }
+
+            //console.log("------------------------------------------");
+        }
+    });
+
+    $(window).on("load", function () {
+
+        var pagers = document.getElementsByClassName("mp-pagination");
+        if (pagers != null) {
+
+            for (var i = 0; i < pagers[0].childNodes.length; i++) {
+                var liElem = pagers[0].childNodes[i];
+
+                var className = liElem.getAttribute("class");
+                if (className != null && className === "link-primary") {
+                    liElem.setAttribute("hidden", "true");
+                }
+
+            }
+        }
+    });
+
+    //function deleteItem(form) {
+
+    //    $(form).parents('li').parent('ul').parent('td').parent('tr').remove();
+
+    //    //window.location.reload();
+
+    //    //$.ajax({
+    //    //    url: 'Author/ShowAllPage',
+    //    //    type: 'GET',
+    //    //    dataType: 'json',
+    //    //    data: {
+
+    //    //    },
+    //    //    success: function (data) {
+
+    //    //        console.log('success');
+    //    //    },
+    //    //    error: function (data) {
+    //    //        console.log('err');
+    //    //        //alert(data)
+    //    //        //alert('fail');
+    //    //        //window.location.reload();
+    //    //    }
+    //    //});
+    //}
+
+
+
+    function reply_clickSearch(clicked_id) {
+        idForSearch = clicked_id;
+    }
+    function reply_clickEdit(clicked_id) {
+
+        idForSearch = clicked_id;
+    }
+
+                                //$('.search').click(function () {
+                                //    var url = '@Url.Action("ShowAuthorBooks", "Author")';
+                                //    if (idForSearch != null) {
+                                //        $('#searchResults').load(url, { id: idForSearch });
+                                //    }
+                                //});
+
+                                //var url = '@Url.Action("EditPage", "Author")';
+                                //$('.edit').click(function() {
+
+                                //    if (idForSearch != null) {
+                                //        $('#editResults').load(url, { id: idForSearch });
+                                //    }
+                                //});
+
+</script>
+
+@section Scripts{
+
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

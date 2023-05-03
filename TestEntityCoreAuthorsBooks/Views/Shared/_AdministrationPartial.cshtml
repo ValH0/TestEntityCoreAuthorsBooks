@@ -1,0 +1,20 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<ul>
+    <li>
+        <a asp-area="Identity" asp-controller="Administration" asp-action="DataBaseRefresh"
+            title="All Data Will Be Deleted">Refresh All Data</a>
+    </li>
+    <li>
+        <a asp-area="Identity" asp-controller="Users"
+        asp-action="ListUsers">Users Data</a>
+    </li>
+    <li>
+        <a asp-area="Identity" asp-controller="Administration"
+        asp-action="ListRoles">Administration</a>
+    </li>
+    <li>
+        <a asp-area="Identity" asp-controller="Administration"
+        asp-action="AddClaims" title="Refresh Claims">AddClaims</a>
+    </li>
+</ul>

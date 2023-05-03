@@ -1,0 +1,83 @@
+﻿.delete, .search, .edit, .save {
+    border-radius: 10px;
+    background-color: #4CAF50;
+    border: 1px solid green;
+    color: white;
+    padding: 8px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    float: left;
+    margin-left: 2%;
+    transition-duration: 0.4s;
+}
+
+    .delete:hover {
+        background-color: crimson;
+        color: black;
+    }
+
+.save {
+    margin-left: 36%;
+}
+
+.button-as-link {
+    align-items: normal;
+    background-color: rgba(0,0,0,0);
+    border-color: rgb(0, 0, 238);
+    border-style: none;
+    box-sizing: content-box;
+    color: rgb(0, 0, 238);
+    cursor: pointer;
+    display: inline;
+    font: inherit;
+    height: auto;
+    padding: 0;
+    perspective-origin: 0 0;
+    text-align: start;
+    text-decoration: underline;
+    transform-origin: 0 0;
+    width: auto;
+    -moz-appearance: none;
+   
+}
+    .button-as-link:hover {
+        color: rgb(1, 1, 122);
+        transition-duration: 0.6s;
+    }
+
+    @supports (-moz-appearance:none) { /* Mozilla-only */
+        button-as-link:: -moz-focus-inner { /* reset any predefined properties */
+        border: none;
+        padding: 0;
+    }
+
+    button-as-link:focus { /* add outline to focus pseudo-class */
+        outline-style: dotted;
+        outline-width: 1px;
+    }
+}
+
+.clear {
+    position: absolute;
+    top: 0;
+    border-radius: 5px;
+    left: 45%;
+
+    border: none;
+    width:20px;
+    top: 6px;
+    height: 25px;
+    cursor: pointer;
+    color: white;
+    text-align:center;
+    background-color: #000000;
+    transform: translateX(2px);
+    display:none;
+}
+.buttonIn {
+    width: 100px;
+    position: relative;
+}

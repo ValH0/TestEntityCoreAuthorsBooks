@@ -1,0 +1,20 @@
+﻿.edit-employee-div {
+  align-items: center;
+}
+
+.main-label-page {
+    color: antiquewhite;
+    text-align: center;
+}
+
+.text-input {
+    margin-left: 4%;
+    width: 260px;
+}
+
+.text-label {
+    color: white;
+    margin-top: 3%;
+    margin-left: 3%;
+}
+

@@ -1,0 +1,16 @@
+﻿
+<div id="login-form">
+    <h1>NEW AUTHOR</h1>
+    <fieldset>
+        <form action="/Author/AddAuthor" method="post">
+            <input type="text" name="firstName" required placeholder="Lastname" pattern="^[a-zA-Z]+$">
+            <input type="text" name="lastName" required placeholder="Firstname" pattern="^[a-zA-Z]+$">
+            <input type="submit" value="ADD">
+        </form>
+    </fieldset>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/fields.css" media="screen" type="text/css" />
+}

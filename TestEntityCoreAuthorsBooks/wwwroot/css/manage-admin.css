@@ -1,0 +1,21 @@
+﻿.manageadmin:hover {
+    background-color: black;
+    transition: .5s ease-in-out;
+}
+
+.manageadmin ul {
+    display: none;
+}
+
+.manageadmin:hover ul {
+    display: block;
+    position: absolute;
+    margin-left: 180px;
+    margin-top: -45px;
+}
+
+.manageadmin ul li {
+    background-color: #0081ff;
+    font-weight: 700;
+    width: 140px;
+}
