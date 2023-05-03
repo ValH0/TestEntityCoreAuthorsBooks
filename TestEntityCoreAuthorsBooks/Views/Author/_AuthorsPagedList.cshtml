@@ -1,8 +1,10 @@
 ﻿@using MvcPagedList.Core;
-@using TestEntityCoreAuthorsBooks.ProgrammData.DataExtensions;
 @model TestEntityCoreAuthorsBooks.Models.ShowModel
 
-@*<input type="hidden" id="customInput" data-value="@ViewBag.p" />*@
+@{
+    //var s = "4";
+    //Console.WriteLine(s);
+}
 
 @PagedList.Pager(
     actionName: "PagerStep",
@@ -10,7 +12,7 @@
     routeValues: new
     {
         term = Context.Request.Query["term"],
-        perpage = TempData.Get<string>("p"),
+        //perpage = s,
     },
 
     ajaxAttributes: new
@@ -37,23 +39,11 @@
         LiElementClasses = "link-primary",
         
     },
-
     controllerName: "Author",
 
     areaName: ""
-
 )
-@{
-    object a = ViewBag.p;
-    
-    Console.WriteLine(a);
-}
 
 <script type="text/javascript">
-    //var s = document.getElementsByName("perpage");
-
-    //console.log("tableOnLoad");
-    //console.log(s);
-    //console.log(s[0].options[s[0].selectedIndex].text);
-
+  
 </script>

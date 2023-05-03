@@ -76,8 +76,9 @@ services.AddAuthorization(options =>
 
 });
 
-WebApplication app = builder.Build();
+IWebHostEnvironment environment = builder.Environment;
 
+WebApplication app = builder.Build();
 app.UseStatusCodePages();
 
 // Configure the HTTP request pipeline.

@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;
-using System.Runtime.Versioning;
-using System.Web.WebPages;
 using TestEntityCoreAuthorsBooks.Models;
 using TestEntityCoreAuthorsBooks.ProgrammData.BLL.Services;
 using TestEntityCoreAuthorsBooks.ProgrammData.Common.Models;
-using TestEntityCoreAuthorsBooks.ProgrammData.DataExtensions;
+
 
 namespace TestEntityCoreAuthorsBooks.Controllers
 {
@@ -16,12 +13,32 @@ namespace TestEntityCoreAuthorsBooks.Controllers
         private readonly IAuthorsBooksService _authorsBooksService;
 
         private ShowModel _paginatedProperties;
+        //private JsonHelpers _jsonHelpers;
 
         public AuthorController(IAuthorService authorService,
             IAuthorsBooksService authorsBooksService)
         {
             _authorService = authorService;
             _authorsBooksService = authorsBooksService;
+           
+            
+            try
+            {
+               
+                //_jsonHelpers = new JsonHelpers(filePath);
+
+                //UserApplicationModel applicationModel = _jsonHelpers.Deserialize();
+                //Console.WriteLine(applicationModel);
+                //if(applicationModel != null && applicationModel.ItemsPerPage == null)
+                //{
+                //    applicationModel.ItemsPerPage = "2";
+                //    _jsonHelpers.Serialize(applicationModel);
+                //}
+            }
+            catch (Exception ex)
+            {
+
+            }           
         }
 
         // Get /Views/Author/AddPage
@@ -62,23 +79,16 @@ namespace TestEntityCoreAuthorsBooks.Controllers
             Debug.WriteLine("Debug.WriteLine = ShowAllPage(ShowModel paginatedProperties)");
             _paginatedProperties = await _authorService.Search(paginatedProperties);
 
+            //UserApplicationModel applicationModel = _jsonHelpers.Deserialize();
+            //if (applicationModel != null)
+            //{
+            //    _paginatedProperties.RecordsPerPage = Convert.ToInt32(applicationModel.ItemsPerPage);
+            //}
+
             if (!string.IsNullOrEmpty(_paginatedProperties.SortField))
             {
                 return View(SortAuthorsData(_paginatedProperties));
             }
-            var temp = TempData.Get<string>("p");
-            if(temp != null)
-            {
-                TempData.Put<string>("p", temp);
-            }
-            else
-            {
-                TempData.Put<string>("p", Convert.ToString(4));
-            }
-            //ViewBag.p = "4";
-            
-
-            //Console.WriteLine("Debug.WriteLine = " + temp);
 
             return View(_paginatedProperties);
         }
@@ -91,6 +101,21 @@ namespace TestEntityCoreAuthorsBooks.Controllers
             string currentSortField,
             string currentSortOrder)
         {
+
+            //UserApplicationModel applicationModel = null;
+            //try
+            //{
+            //    applicationModel = _jsonHelpers.Deserialize();
+
+            //    if (applicationModel != null)
+            //    {
+            //        paginatedProperties.RecordsPerPage = Convert.ToInt32(applicationModel.ItemsPerPage);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Debug.WriteLine(ex.ToString());
+            //}
 
             Debug.WriteLine("Debug.WriteLine = Sort(ShowModel paginatedProperties)");
             _paginatedProperties = await _authorService.Search(paginatedProperties);
@@ -110,32 +135,33 @@ namespace TestEntityCoreAuthorsBooks.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> PagerStep(ShowModel paginatedProperties, int page, string perpage)
+        public async Task<ActionResult> PagerStep(ShowModel paginatedProperties, int page)
         {
+            //UserApplicationModel applicationModel = null;
+            //try
+            //{
+            //    applicationModel = _jsonHelpers.Deserialize();
 
-            try
-            {
-                var temp = TempData.Get<string>("p");
-                if(temp != null)
-                {
-
-                }
-                TempData.Put<string>("p", perpage);
-                //ViewBag.p = perpage;
-                paginatedProperties.RecordsPerPage = Convert.ToInt32(perpage);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.ToString());
-            }
-            //paginatedProperties.RecordsPerPage = 2;
+            //    if(applicationModel != null)
+            //    {
+            //        paginatedProperties.RecordsPerPage = Convert.ToInt32(applicationModel.ItemsPerPage);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Debug.WriteLine(ex.ToString());
+            //}
+           
             Debug.WriteLine("Debug.WriteLine = PagerStep(ShowModel paginatedProperties, int page)");
             _paginatedProperties = await _authorService.Search(paginatedProperties);
             if(page > -1)
             {
                 _paginatedProperties.Page = page;
             }
-            
+            //if (applicationModel != null)
+            //{
+            //    _paginatedProperties.RecordsPerPage = Convert.ToInt32(applicationModel.ItemsPerPage);
+            //}
 
             return PartialView("_AuthorsList", _paginatedProperties);
         }
@@ -225,18 +251,24 @@ namespace TestEntityCoreAuthorsBooks.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdatePerPage(string text)
+        public async Task<IActionResult> UpdatePerPage(ShowModel paginatedProperties, string perpage)
         {
 
             ItemsPerPage itemsPerPage = ItemsPerPage.Two;
-            if(Enum.TryParse<ItemsPerPage>(text, true, out itemsPerPage))
+            if(Enum.TryParse<ItemsPerPage>(perpage, true, out itemsPerPage))
             {
 
             }
+            //Console.WriteLine(_paginatedProperties);
+            //Debug.WriteLine(Convert.ToString((int)itemsPerPage));
 
-            TempData.Put<string>("p", Convert.ToString((int)itemsPerPage));
-            //ViewBag.p = (int)itemsPerPage;
             Debug.WriteLine("Debug.WriteLine = UpdatePerPage(string id)");
+
+            //UserApplicationModel item = new UserApplicationModel();
+            //item.ItemsPerPage = Convert.ToString((int)itemsPerPage);
+            //_jsonHelpers.Serialize(item);
+
+
             return new EmptyResult();
         }
 
@@ -267,6 +299,9 @@ namespace TestEntityCoreAuthorsBooks.Controllers
                 paginatedProperties.Authors.OrderBy(s => propertyInfo.GetValue(s, null)).ToList()
                 :
                 paginatedProperties.Authors.OrderByDescending(s => propertyInfo.GetValue(s, null)).ToList();
+
+
+
 
             return paginatedProperties;
         }

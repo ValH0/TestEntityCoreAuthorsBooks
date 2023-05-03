@@ -232,12 +232,14 @@ else
         //console.log(s);
         var value = s[0].options[s[0].selectedIndex].text;
         console.log(s[0].options[s[0].selectedIndex].text);
+        console.log("valuevaluevaluevaluevaluevaluevalue");
+        console.log(value);
         $.ajax({
                 url: 'Author/UpdatePerPage',
                 type: 'POST',
                 dataType: 'json',
                 data: {
-                    text: value,
+                perpage: value,
                 },
                 
                 success: function (data) {
