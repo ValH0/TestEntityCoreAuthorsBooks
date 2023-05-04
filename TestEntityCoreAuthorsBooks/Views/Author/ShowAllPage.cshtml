@@ -2,38 +2,34 @@
 
 <div class="panel panel-default">
     <div style="margin-bottom: 2%;" class="container-fluid">
-        @if(Model.PageUiModel != null)
-        {
-            
-        }
         <input id="idPageUiModel" hidden type="text" value="@Model.PageUiModel.Id" />
         <form class="row g-1" id="search-form" asp-action="Search" data-ajax="true"
               data-ajax-method="GET" data-ajax-update="#ajax-show-list"
               data-ajax-loading="#global-ajax-loading">
 
             <div class="row">
-
                 <div class="col-sm-6 .col-lg-8">
-
-                    @Html.TextBox("term", null,
-                    new { @class = "form-control",
-                    id = "idInputSearch",
-                    placeholder = "search ...",
-                    style=""
-                    })
-
+                    <span class="deleteicon">
+                        @Html.TextBox("term", null,
+                        new { @class = "form-control",
+                        id = "idInputSearch",
+                        placeholder = "search ...",
+                        })
+                        <span id="idClearInput" class="cross-clear">X</span>
+                        @*onclick="var input = this.previousElementSibling; input.value = ''; input.focus();"*@
+                    </span>
 
                 </div>
                 <div class="col-sm-2">
-                    <input type="submit" class="btn btn-primary" value="Search" />
+                    <input id="idBtnSearch" type="submit" class="btn btn-primary" value="Search" />
                 </div>
                 <div class="col-sm-2">
                     <select asp-for="ItemsPerPage" id="perpage" name="perpage" class="form-control"
                             asp-items="Html.GetEnumSelectList<ItemsPerPage>()">
                     </select>
                 </div>
-               
-                
+
+
             </div>
         </form>
     </div>
@@ -49,18 +45,19 @@
 <script type="text/javascript">
     document.getElementById("idInputSearch").addEventListener("input", inputSearchInput);
     document.getElementById("perpage").addEventListener("change", onChangePerPage);
+    document.getElementById("idClearInput").addEventListener("click", onClickClearInput);
 
     //document.getElementById("idInputSearch").addEventListener("focusout", inputSearchChange);
-    
+
     //document.getElementById("idClearInput").addEventListener("click", clearClick);
 
-   
-    function onChangePerPage(){
+
+    function onChangePerPage() {
         console.log('changePerPage');
         var htmlElem = document.getElementsByName("perpage");
         var pageUiElem = document.getElementById("idPageUiModel");
         console.log("pageUiElem.value = " + pageUiElem.value);
-        if (htmlElem === null || pageUiElem === null){
+        if (htmlElem === null || pageUiElem === null) {
             return;
         }
 
@@ -116,20 +113,43 @@
         }
     }
 
-    //function clearClick() {
-    //    console.log('3333333333333333');
+    function onClickClearInput() {
+        console.log('3333333333333333');
 
-    //    var idSearch = document.getElementById("idInputSearch");
-    //    var idClear = document.getElementById("idClearInput");
-    //    if (idSearch != null) {
-    //        idSearch.value = '';
-    //        $("#theTable").load("/Author/Search");
-    //    }
-    //    if (idClear != null) {
-    //        idClear.style.display = 'none';
-    //    }
+        var idSearch = document.getElementById("idInputSearch");
+        var idClear = document.getElementById("idClearInput");
+        var pageUiElem = document.getElementById("idPageUiModel");
+        console.log("pageUiElem.value = " + pageUiElem.value);
+        if (idSearch != null) {
+            idSearch.value = '';
+            
+            document.getElementById("idBtnSearch").click();
+            console.log("idSearch != null");
+            //$("#theTable").load("/Author/Search?term=" + null);
+            //$.ajax({
+            //    url: 'Author/Search',
+            //    type: 'GET',
+            //    dataType: 'json',
+            //    data: {
+            //        term: null,
+            //        idPageUi: pageUiElem.value,
+            //    },
 
-    //}
+            //    success: function (data) {
+
+            //        console.log('success');
+            //    },
+            //    error: function (data) {
+            //        console.log('err');
+            //    }
+            //});
+            idSearch.focus();
+        }
+        if (idClear != null) {
+            idClear.style.display = 'none';
+        }
+
+    }
 </script>
 
 @section Scripts{

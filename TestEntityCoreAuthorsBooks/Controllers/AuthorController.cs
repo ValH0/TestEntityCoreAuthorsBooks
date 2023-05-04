@@ -180,7 +180,7 @@ namespace TestEntityCoreAuthorsBooks.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Search(ShowModel paginatedProperties, string term)
+        public async Task<ActionResult> Search(ShowModel paginatedProperties, string term, string idPageUi)
         {
             Debug.WriteLine("Debug.WriteLine = Search(ShowModel paginatedProperties)");
 
@@ -193,10 +193,21 @@ namespace TestEntityCoreAuthorsBooks.Controllers
             {
                 paginatedProperties.Term = term;
             }
-          
+            
+
             _paginatedProperties = await _authorService.Search(paginatedProperties);
 
             _paginatedProperties.RecordsPerPage = (int)paginatedProperties.ItemsPerPage;
+
+            if (string.IsNullOrEmpty(term) && !string.IsNullOrEmpty(idPageUi))
+            {
+                PageUiModel pageUiModel = await _pageUiService.GetPageUiById(Convert.ToInt32(idPageUi));
+                if (pageUiModel != null)
+                {
+                    _paginatedProperties.RecordsPerPage = Convert.ToInt32(pageUiModel.ItemsPerPage);
+                    _paginatedProperties.PageUiModel = pageUiModel;
+                }
+            }
 
             return PartialView("_AuthorsList", _paginatedProperties);
         }

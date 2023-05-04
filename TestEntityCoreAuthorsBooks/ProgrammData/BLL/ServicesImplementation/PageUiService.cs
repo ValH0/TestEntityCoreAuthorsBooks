@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using TestEntityCoreAuthorsBooks.ProgrammData.BLL.Services;
 using TestEntityCoreAuthorsBooks.ProgrammData.Common.Models;
 using TestEntityCoreAuthorsBooks.ProgrammData.DAL.Entity;
@@ -48,7 +49,15 @@ namespace TestEntityCoreAuthorsBooks.ProgrammData.BLL.ServicesImplementation
 
         public async Task<PageUiModel> GetPageUiById(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                PageUI pageUi = await _repository.Read(id);
+                return _mapper.Map<PageUiModel>(pageUi);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task<bool> RemovePageUi(int id)

@@ -56,7 +56,14 @@ namespace TestEntityCoreAuthorsBooks.ProgrammData.DAL.Repositories
 
         public async Task<PageUI> Read(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _context.PageUIs.FirstOrDefaultAsync(u => u.Id == id);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task<bool> Remove(int id)

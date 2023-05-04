@@ -187,5 +187,35 @@ body {
     width: 140px;
 }
 */
+span.deleteicon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width:100%;
+}
 
+    span.deleteicon span {
+        position: absolute;
+        right: 5px;
+        width: 25px;
+        height: 26px;       
+        color: black;
+        background-color: #ccc;
+        font: 20px monospace;
+        text-align: center;
+        line-height: 1.2em;       
+        cursor: pointer;
+    }
+
+    span.deleteicon input {
+        padding-right: 5px;
+        box-sizing: border-box;
+    }
+
+.cross-clear {
+    display: none;
+    border: 2px solid red;
+    border-radius: 10px;
+    box-shadow: 1px 1px 5px red;
+}
 
