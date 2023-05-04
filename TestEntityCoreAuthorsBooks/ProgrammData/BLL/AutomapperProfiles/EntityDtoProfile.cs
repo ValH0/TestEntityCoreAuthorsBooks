@@ -28,6 +28,20 @@ namespace TestEntityCoreAuthorsBooks.ProgrammData.BLL.AutomapperProfiles
                     .ForMember(
                          dest => dest.Address,
                          opt => opt.MapFrom(src => src.Address));
+
+
+            /////
+            CreateMap<PageUiModel, PageUI>()
+                 .ForMember(
+                     dest => dest.ItemsPerPage,
+                     opt => opt.MapFrom(src => src.ItemsPerPage));
+
+            CreateMap<PageUI, PageUiModel>()
+                    .ForMember(
+                         dest => dest.ItemsPerPage,
+                         opt => opt.MapFrom(src => src.ItemsPerPage));
+
+
             /////
             CreateMap<AuthorViewModel, AuthorModel>()
                    .ForMember(

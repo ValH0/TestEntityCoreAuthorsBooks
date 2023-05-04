@@ -26,11 +26,15 @@ namespace TestEntityCoreAuthorsBooks.ProgrammData.DAL.Repositories
             return Convert.ToBoolean(await _context.SaveChangesAsync());
         }
 
-        public async Task<bool> Create(Author item)
+        public async Task<int> Create(Author item)
         {
             await _context.Authors.AddAsync(item);
             _context.Entry(item).State = EntityState.Added;
-            return Convert.ToBoolean(await _context.SaveChangesAsync());
+            await _context.SaveChangesAsync();
+
+            int id = _context.Authors.Entry(item).Entity.Id;
+
+            return id;
         }
 
         public async Task<bool> Update(Author item)

@@ -19,7 +19,7 @@ namespace TestEntityCoreAuthorsBooks.ProgrammData.BLL.ServicesImplementation
             _mapper = mapper;
         }
 
-        public async Task<bool> CreateAuthorsBooks(AuthorsBooksModel item)
+        public async Task<int> CreateAuthorsBooks(AuthorsBooksModel item)
         {
             AuthorsBooks mapper = _mapper.Map<AuthorsBooks>(item);
             return await _repository.Create(mapper);

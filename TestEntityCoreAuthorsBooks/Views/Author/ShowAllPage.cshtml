@@ -2,6 +2,11 @@
 
 <div class="panel panel-default">
     <div style="margin-bottom: 2%;" class="container-fluid">
+        @if(Model.PageUiModel != null)
+        {
+            
+        }
+        <input id="idPageUiModel" hidden type="text" value="@Model.PageUiModel.Id" />
         <form class="row g-1" id="search-form" asp-action="Search" data-ajax="true"
               data-ajax-method="GET" data-ajax-update="#ajax-show-list"
               data-ajax-loading="#global-ajax-loading">
@@ -42,23 +47,32 @@
 @*@Html.Partial("_AuthorsPagedList", Model)*@
 
 <script type="text/javascript">
-    
-    //document.getElementById("idInputSearch").addEventListener("focusout", inputSearchChange);
     document.getElementById("idInputSearch").addEventListener("input", inputSearchInput);
-    //document.getElementById("idClearInput").addEventListener("click", clearClick);
-    document.getElementById("perpage").addEventListener("change", changePerPage);
-    function changePerPage(){
-        console.log('changePerPage');
-        var s = document.getElementsByName("perpage");
+    document.getElementById("perpage").addEventListener("change", onChangePerPage);
 
-        var value = s[0].options[s[0].selectedIndex].text;
-        console.log(s[0].options[s[0].selectedIndex].text);
+    //document.getElementById("idInputSearch").addEventListener("focusout", inputSearchChange);
+    
+    //document.getElementById("idClearInput").addEventListener("click", clearClick);
+
+   
+    function onChangePerPage(){
+        console.log('changePerPage');
+        var htmlElem = document.getElementsByName("perpage");
+        var pageUiElem = document.getElementById("idPageUiModel");
+        console.log("pageUiElem.value = " + pageUiElem.value);
+        if (htmlElem === null || pageUiElem === null){
+            return;
+        }
+
+        var perpageValue = htmlElem[0].options[htmlElem[0].selectedIndex].text;
+        console.log(htmlElem[0].options[htmlElem[0].selectedIndex].text);
         $.ajax({
             url: 'Author/UpdatePerPage',
             type: 'POST',
             dataType: 'json',
             data: {
-                text: value,
+                perpage: perpageValue,
+                idPageUi: pageUiElem.value,
             },
 
             success: function (data) {

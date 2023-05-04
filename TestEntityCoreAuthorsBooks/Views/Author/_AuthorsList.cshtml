@@ -226,20 +226,26 @@ else
 
     function onLiElemClick(){
         console.log("onLiElemClick");
-        var s = document.getElementsByName("perpage");
 
+        var htmlElem = document.getElementsByName("perpage");
+        var pageUiElem = document.getElementById("idPageUiModel");
+        console.log("pageUiElem.value = " + pageUiElem.value);
+
+        if (htmlElem === null || pageUiElem === null) {
+            return;
+        }
         //console.log("tableOnLoad");
         //console.log(s);
-        var value = s[0].options[s[0].selectedIndex].text;
-        console.log(s[0].options[s[0].selectedIndex].text);
-        console.log("valuevaluevaluevaluevaluevaluevalue");
-        console.log(value);
+        var perpageValue = htmlElem[0].options[htmlElem[0].selectedIndex].text;
+        console.log(htmlElem[0].options[htmlElem[0].selectedIndex].text);
+        
         $.ajax({
                 url: 'Author/UpdatePerPage',
                 type: 'POST',
                 dataType: 'json',
                 data: {
-                perpage: value,
+                    perpage: perpageValue,
+                    idPageUi: pageUiElem.value,
                 },
                 
                 success: function (data) {

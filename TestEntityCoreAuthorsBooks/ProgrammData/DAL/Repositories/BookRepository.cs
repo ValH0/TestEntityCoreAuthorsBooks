@@ -26,12 +26,15 @@ namespace TestEntityCoreAuthorsBooks.ProgrammData.DAL.Repositories
             return Task.FromResult(true);
         }
 
-        Task<bool> IRepository<Book>.Create(Book item)
+        public async Task<int> Create(Book item)
         {
-            _context.Entry(item).State = item.Id == 0 ? EntityState.Added : EntityState.Modified;
-            _context.Books.Add(item);
-            _context.SaveChanges();
-            return Task.FromResult(true);
+            await _context.Books.AddAsync(item);
+            _context.Entry(item).State = EntityState.Added;
+            await _context.SaveChangesAsync();
+
+            int id = _context.Books.Entry(item).Entity.Id;
+
+            return id;
         }
 
         Task<bool> IRepository<Book>.Update(Book item)

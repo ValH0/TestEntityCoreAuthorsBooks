@@ -13,6 +13,7 @@ namespace TestEntityCoreAuthorsBooks.Data
         public virtual DbSet<AuthorsBooks> AuthorsBooks { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<Person> Persons { get; set; }
+        public virtual DbSet<PageUI> PageUIs { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -35,6 +36,7 @@ namespace TestEntityCoreAuthorsBooks.Data
             modelBuilder.Entity<AuthorsBooks>().HasKey(m => m.Id);
             modelBuilder.Entity<Employee>().HasKey(m => m.Id);
             modelBuilder.Entity<Person>().HasKey(m => m.Id);
+            modelBuilder.Entity<PageUI>().HasKey(m => m.Id);
 
             base.OnModelCreating(modelBuilder);
 
@@ -51,7 +53,8 @@ namespace TestEntityCoreAuthorsBooks.Data
                 Authors.Any() ||
                 AuthorsBooks.Any() ||
                 Employees.Any() ||
-                Persons.Any())
+                Persons.Any() ||
+                PageUIs.Any())
             {
                 return false;
             }
@@ -229,8 +232,16 @@ namespace TestEntityCoreAuthorsBooks.Data
                 Country = "Country 6",
             };
 
+            PageUI pageUI1 = new PageUI()
+            {
+                ItemsPerPage = "2",
+            };
+
+            PageUIs.AddRange(new[] { pageUI1 });
+
             Authors.AddRange(new[] { author1, author2, author3, author4 });
             Persons.AddRange(new[] {person1,person2, person3, person4 });
+
 
             Employees.AddRange(new[] { employee1, employee2, employee3, employee4 });
 

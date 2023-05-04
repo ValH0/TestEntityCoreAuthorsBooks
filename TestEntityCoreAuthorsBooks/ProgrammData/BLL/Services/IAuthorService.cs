@@ -8,7 +8,7 @@ namespace TestEntityCoreAuthorsBooks.ProgrammData.BLL.Services
         Task<IEnumerable<AuthorModel>> GetAllAuthors();
         Task<AuthorModel> GetAuthorById(int id);
         Task<bool> UpdateAuthor(AuthorModel item);
-        Task<bool> CreateAuthor(AuthorModel item);
+        Task<int> CreateAuthor(AuthorModel item);
         Task<bool> RemoveAuthor(int id);
         //IEnumerable<AuthorModel> Search
         //    (int page, int recordsPerPage, string term, out int pageSize, out int totalItemCount);

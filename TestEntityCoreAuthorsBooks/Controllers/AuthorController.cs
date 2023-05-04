@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;
 using TestEntityCoreAuthorsBooks.Models;
 using TestEntityCoreAuthorsBooks.ProgrammData.BLL.Services;
@@ -11,34 +13,22 @@ namespace TestEntityCoreAuthorsBooks.Controllers
     {
         private readonly IAuthorService _authorService;
         private readonly IAuthorsBooksService _authorsBooksService;
+        private readonly IPageUiService _pageUiService;
+
+        private readonly ILogger<AuthorController> _logger;
 
         private ShowModel _paginatedProperties;
-        //private JsonHelpers _jsonHelpers;
-
-        public AuthorController(IAuthorService authorService,
-            IAuthorsBooksService authorsBooksService)
+        
+        public AuthorController(ILogger<AuthorController> logger,
+            IAuthorService authorService,
+            IAuthorsBooksService authorsBooksService,
+            IPageUiService pageUiService)
         {
+            _logger = logger;
+
             _authorService = authorService;
             _authorsBooksService = authorsBooksService;
-           
-            
-            try
-            {
-               
-                //_jsonHelpers = new JsonHelpers(filePath);
-
-                //UserApplicationModel applicationModel = _jsonHelpers.Deserialize();
-                //Console.WriteLine(applicationModel);
-                //if(applicationModel != null && applicationModel.ItemsPerPage == null)
-                //{
-                //    applicationModel.ItemsPerPage = "2";
-                //    _jsonHelpers.Serialize(applicationModel);
-                //}
-            }
-            catch (Exception ex)
-            {
-
-            }           
+            _pageUiService = pageUiService;    
         }
 
         // Get /Views/Author/AddPage
@@ -77,13 +67,31 @@ namespace TestEntityCoreAuthorsBooks.Controllers
         public async Task<IActionResult> ShowAllPage(ShowModel paginatedProperties)
         {
             Debug.WriteLine("Debug.WriteLine = ShowAllPage(ShowModel paginatedProperties)");
-            _paginatedProperties = await _authorService.Search(paginatedProperties);
 
-            //UserApplicationModel applicationModel = _jsonHelpers.Deserialize();
-            //if (applicationModel != null)
-            //{
-            //    _paginatedProperties.RecordsPerPage = Convert.ToInt32(applicationModel.ItemsPerPage);
-            //}
+            PageUiModel pageUiModel = null;
+            try
+            {
+                pageUiModel = new PageUiModel()
+                {
+                    ItemsPerPage = "2",
+                };
+
+                int id = await _pageUiService.CreatePageUi(pageUiModel);
+                if(id == -1)
+                {
+                    var temp = (await _pageUiService.GetAllPageUis()).FirstOrDefault();
+                    pageUiModel.Id = temp.Id;
+                }
+                paginatedProperties.PageUiModel = pageUiModel;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.ToString());
+            }
+
+            _paginatedProperties = await _authorService.Search(paginatedProperties); 
+            _paginatedProperties.RecordsPerPage = Convert.ToInt32(pageUiModel.ItemsPerPage);
+            
 
             if (!string.IsNullOrEmpty(_paginatedProperties.SortField))
             {
@@ -101,23 +109,24 @@ namespace TestEntityCoreAuthorsBooks.Controllers
             string currentSortField,
             string currentSortOrder)
         {
-
-            //UserApplicationModel applicationModel = null;
-            //try
-            //{
-            //    applicationModel = _jsonHelpers.Deserialize();
-
-            //    if (applicationModel != null)
-            //    {
-            //        paginatedProperties.RecordsPerPage = Convert.ToInt32(applicationModel.ItemsPerPage);
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    Debug.WriteLine(ex.ToString());
-            //}
-
             Debug.WriteLine("Debug.WriteLine = Sort(ShowModel paginatedProperties)");
+
+            PageUiModel pageUiModel = null;
+
+            try
+            {
+                pageUiModel = (await _pageUiService.GetAllPageUis()).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.ToString());
+            }
+
+            if (pageUiModel != null && !string.IsNullOrEmpty(pageUiModel.ItemsPerPage))
+            {
+                paginatedProperties.RecordsPerPage = Convert.ToInt32(pageUiModel.ItemsPerPage);
+            }
+            
             _paginatedProperties = await _authorService.Search(paginatedProperties);
             if (page > -1)
             {
@@ -137,30 +146,34 @@ namespace TestEntityCoreAuthorsBooks.Controllers
         [HttpGet]
         public async Task<ActionResult> PagerStep(ShowModel paginatedProperties, int page)
         {
-            //UserApplicationModel applicationModel = null;
-            //try
-            //{
-            //    applicationModel = _jsonHelpers.Deserialize();
-
-            //    if(applicationModel != null)
-            //    {
-            //        paginatedProperties.RecordsPerPage = Convert.ToInt32(applicationModel.ItemsPerPage);
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    Debug.WriteLine(ex.ToString());
-            //}
-           
             Debug.WriteLine("Debug.WriteLine = PagerStep(ShowModel paginatedProperties, int page)");
+
+            PageUiModel pageUiModel = null;
+
+            try
+            {
+                pageUiModel = (await _pageUiService.GetAllPageUis()).FirstOrDefault();
+                paginatedProperties.PageUiModel = pageUiModel;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.ToString());
+            }
+
+            if (pageUiModel != null && !string.IsNullOrEmpty(pageUiModel.ItemsPerPage))
+            {
+                paginatedProperties.RecordsPerPage = Convert.ToInt32(pageUiModel.ItemsPerPage);
+            }
+           
             _paginatedProperties = await _authorService.Search(paginatedProperties);
             if(page > -1)
             {
                 _paginatedProperties.Page = page;
             }
-            //if (applicationModel != null)
+
+            //if (pageUiModel != null && !string.IsNullOrEmpty(pageUiModel.ItemsPerPage))
             //{
-            //    _paginatedProperties.RecordsPerPage = Convert.ToInt32(applicationModel.ItemsPerPage);
+            //    //_paginatedProperties.RecordsPerPage = Convert.ToInt32(pageUiModel.ItemsPerPage);
             //}
 
             return PartialView("_AuthorsList", _paginatedProperties);
@@ -169,7 +182,9 @@ namespace TestEntityCoreAuthorsBooks.Controllers
         [HttpGet]
         public async Task<ActionResult> Search(ShowModel paginatedProperties, string term)
         {
-            if(term != null && term.Contains('%'))
+            Debug.WriteLine("Debug.WriteLine = Search(ShowModel paginatedProperties)");
+
+            if (term != null && term.Contains('%'))
             {
                 term = term.Replace('%', ' ');
             }
@@ -178,12 +193,10 @@ namespace TestEntityCoreAuthorsBooks.Controllers
             {
                 paginatedProperties.Term = term;
             }
-
-            Debug.WriteLine("Debug.WriteLine = Search(ShowModel paginatedProperties)");
+          
             _paginatedProperties = await _authorService.Search(paginatedProperties);
 
             _paginatedProperties.RecordsPerPage = (int)paginatedProperties.ItemsPerPage;
-
 
             return PartialView("_AuthorsList", _paginatedProperties);
         }
@@ -200,9 +213,10 @@ namespace TestEntityCoreAuthorsBooks.Controllers
                 AuthorModel author = await _authorService.GetAuthorById(Convert.ToInt32(id));
                 return PartialView("EditPage", author);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                _logger.LogError(ex, ex.ToString());
+                return BadRequest(ex.Message);
             }
         }
 
@@ -220,54 +234,36 @@ namespace TestEntityCoreAuthorsBooks.Controllers
             IEnumerable<BookModel> bookModels = await _authorsBooksService.FindAuthorsBooks(author);
             return PartialView("_ShowBooks", bookModels);
         }
-        //[HttpPost]
-        //public async Task<IActionResult> Delete(string id)
-        //{
-        //    //await _authorService.RemoveAuthor(Convert.ToInt32(id));
-        //    Debug.WriteLine("Debug.WriteLine = Delete(string id)");
-        //    if (_paginatedProperties == null)
-        //    {
-        //        _paginatedProperties = new ShowModel();// await _authorService.Search(new ShowModel());
-        //    }
-        //    //await _authorService.RemoveAuthor(Convert.ToInt32(id));
-        //    return RedirectToAction("ShowAllPage", _paginatedProperties);
-        //    //return Json(new { IsProcessDone = true, ProcessMessage = "success" });
-        //}
 
         [HttpPost]
         public async Task<IActionResult> Delete(string id, string page)
         {
-            Console.WriteLine(_paginatedProperties);
             Debug.WriteLine("Debug.WriteLine = Delete(string id)");
             await _authorService.RemoveAuthor(Convert.ToInt32(id));
             return new EmptyResult();
-            //if (_paginatedProperties == null)
-            //{
-            //    _paginatedProperties = new ShowModel();
-            //}
-            //await _authorService.RemoveAuthor(Convert.ToInt32(id));
-            //return View("ShowAllPage", _paginatedProperties);
-            //return Json(new { IsProcessDone = true, ProcessMessage = "success" });
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdatePerPage(ShowModel paginatedProperties, string perpage)
+        public async Task<IActionResult> UpdatePerPage(string perpage, string idPageUi)
         {
-
-            ItemsPerPage itemsPerPage = ItemsPerPage.Two;
-            if(Enum.TryParse<ItemsPerPage>(perpage, true, out itemsPerPage))
-            {
-
-            }
-            //Console.WriteLine(_paginatedProperties);
-            //Debug.WriteLine(Convert.ToString((int)itemsPerPage));
-
             Debug.WriteLine("Debug.WriteLine = UpdatePerPage(string id)");
 
-            //UserApplicationModel item = new UserApplicationModel();
-            //item.ItemsPerPage = Convert.ToString((int)itemsPerPage);
-            //_jsonHelpers.Serialize(item);
-
+            try
+            {
+                int perPage = GetItemsPerPage(perpage);
+                PageUiModel pageUiModel = new PageUiModel();
+                
+                if(perPage > 0 && !string.IsNullOrEmpty(idPageUi))
+                {
+                    pageUiModel.ItemsPerPage = Convert.ToString(perPage);
+                    pageUiModel.Id = Convert.ToInt32(idPageUi);
+                    await _pageUiService.UpdatePageUi(pageUiModel);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.ToString());
+            }
 
             return new EmptyResult();
         }
@@ -300,10 +296,17 @@ namespace TestEntityCoreAuthorsBooks.Controllers
                 :
                 paginatedProperties.Authors.OrderByDescending(s => propertyInfo.GetValue(s, null)).ToList();
 
-
-
-
             return paginatedProperties;
+        }
+
+        [NonAction]
+        private int GetItemsPerPage(string perpage)
+        {
+            ItemsPerPage itemsPerPage = ItemsPerPage.Two;
+            if (Enum.TryParse<ItemsPerPage>(perpage, true, out itemsPerPage))
+            {}    
+            
+            return (int)itemsPerPage;
         }
     }
 }

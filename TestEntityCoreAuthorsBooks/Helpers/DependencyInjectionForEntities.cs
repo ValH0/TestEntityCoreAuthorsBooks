@@ -11,23 +11,24 @@ namespace TestEntityCoreAuthorsBooks.Helpers
         public static IServiceCollection AddDependencyInjection(this IServiceCollection services)
         {
             services.AddScoped<IAuthorService, AuthorService>();
-           
-           
+                    
             services.AddScoped<IBookService, BookService>();
             
             services.AddScoped<IAuthorsBooksService, AuthorsBooksService>();
+
+            services.AddScoped<IPageUiService, PageUiService>();
            
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
            
 
             services.AddScoped<IRepository<Author>, AuthorRepository>();
-           
-           
+                    
             services.AddScoped<IRepository<Book>, BookRepository>();
-
-           
+          
             services.AddScoped<IRepository<AuthorsBooks>, AuthorsBooksRepository>();
+
+            services.AddScoped<IRepository<PageUI>, PageUiRepository>();
             
             return services;
         }

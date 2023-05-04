@@ -6,7 +6,7 @@ namespace TestEntityCoreAuthorsBooks.Models
     {
         public ShowModel() : this(1, 0, 8, 0)
         {
-
+            //PageUiModel = new PageUiModel();
         }
 
         public ShowModel(
@@ -24,6 +24,8 @@ namespace TestEntityCoreAuthorsBooks.Models
         }
 
         public ItemsPerPage ItemsPerPage { get; set; }
+
+        public PageUiModel PageUiModel { get; set; }
 
         public List<AuthorModel> Authors { get; set; } = new List<AuthorModel>();
     }
