@@ -1,44 +1,48 @@
 ﻿@model TestEntityCoreAuthorsBooks.Models.ShowModel
 
-<div class="panel panel-default">
-    <div style="margin-bottom: 2%;" class="container-fluid">
-        <input id="idPageUiModel" hidden type="text" value="@Model.PageUiModel.Id" />
-        <form class="row g-1" id="search-form" asp-action="Search" data-ajax="true"
-              data-ajax-method="GET" data-ajax-update="#ajax-show-list"
-              data-ajax-loading="#global-ajax-loading">
+<div style="margin-bottom: 2%;" class="container">
+    <form class="form-inline" id="search-form" asp-action="Search" data-ajax="true"
+          data-ajax-method="GET" data-ajax-update="#ajax-show-list"
+          data-ajax-loading="#global-ajax-loading">
 
-            <div class="row">
-                <div class="col-sm-6 .col-lg-8">
-                    <span class="deleteicon">
-                        @Html.TextBox("term", null,
-                        new { @class = "form-control",
-                        id = "idInputSearch",
-                        placeholder = "search ...",
-                        })
-                        <span id="idClearInput" class="cross-clear">X</span>
-                        @*onclick="var input = this.previousElementSibling; input.value = ''; input.focus();"*@
-                    </span>
+        <input id="idPageUiModel" hidden type="text" name="idPageUi" value="@Model.PageUiModel.Id" />
 
-                </div>
-                <div class="col-sm-2">
-                    <input id="idBtnSearch" type="submit" class="btn btn-primary" value="Search" />
-                </div>
-                <div class="col-sm-2">
-                    <select asp-for="ItemsPerPage" id="perpage" name="perpage" class="form-control"
-                            asp-items="Html.GetEnumSelectList<ItemsPerPage>()">
-                    </select>
-                </div>
+        <div class="row">
 
-
+            <div class="col-sm-6 .col-lg-8">
+                <span class="deleteicon">
+                    @Html.TextBox("term", null,
+                    new { @class = "form-control",
+                    id = "idInputSearch",
+                    placeholder = "search... or go to page 1..",
+                    })
+                    <span id="idClearInput" class="cross-clear">X</span>
+                </span>
             </div>
-        </form>
-    </div>
-    <div class="panel-body" id="ajax-show-list">
-        @await Html.PartialAsync("_AuthorsList", Model)
-        @*@Html.Partial("_AuthorsList", Model)*@
 
-    </div>
+            <div style="width:85px;" class="col-sm-2">
+                <input id="idBtnSearch" type="submit" class="btn btn-primary" value="Submit" />
+            </div>
+
+            <div style="width:136px; margin-top:5px; margin-left:20px;" class="col-sm-2">
+                <label class="form-label">Items Per Page:</label>
+            </div>
+
+            <div class="col-sm-2">
+                <select asp-for="ItemsPerPage" id="perpage" name="perpage" class="form-control"
+                        asp-items="Html.GetEnumSelectList<ItemsPerPage>()">
+                </select>
+            </div>
+
+        </div>
+    </form>
 </div>
+<div class="panel-body" id="ajax-show-list">
+    @await Html.PartialAsync("_AuthorsList", Model)
+    @*@Html.Partial("_AuthorsList", Model)*@
+
+</div>
+
 
 @*@Html.Partial("_AuthorsPagedList", Model)*@
 
@@ -122,7 +126,7 @@
         console.log("pageUiElem.value = " + pageUiElem.value);
         if (idSearch != null) {
             idSearch.value = '';
-            
+
             document.getElementById("idBtnSearch").click();
             console.log("idSearch != null");
             //$("#theTable").load("/Author/Search?term=" + null);

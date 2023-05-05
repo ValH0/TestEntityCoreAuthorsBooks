@@ -40,8 +40,8 @@ namespace TestEntityCoreAuthorsBooks.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAuthor(AuthorModel obj)
         {
-            
-           
+
+
             for (int i = 0; i < 120; i++)
             {
                 string lName = obj.LastName.Clone() as string;
@@ -58,7 +58,7 @@ namespace TestEntityCoreAuthorsBooks.Controllers
                 //await _authorService.CreateAuthor(obj);
 
             }
-            
+
             return Redirect("ShowAllPage");
         }
 
@@ -146,6 +146,14 @@ namespace TestEntityCoreAuthorsBooks.Controllers
         [HttpGet]
         public async Task<ActionResult> PagerStep(ShowModel paginatedProperties, int page)
         {
+            if(paginatedProperties != null && !string.IsNullOrEmpty(paginatedProperties.Term))
+            {
+                if(int.TryParse(paginatedProperties.Term, out var term))
+                {
+                    paginatedProperties.Term = string.Empty;
+                }
+            }
+
             Debug.WriteLine("Debug.WriteLine = PagerStep(ShowModel paginatedProperties, int page)");
 
             PageUiModel pageUiModel = null;
@@ -199,13 +207,34 @@ namespace TestEntityCoreAuthorsBooks.Controllers
 
             _paginatedProperties.RecordsPerPage = (int)paginatedProperties.ItemsPerPage;
 
+            PageUiModel pageUiModel = null;
+
             if (string.IsNullOrEmpty(term) && !string.IsNullOrEmpty(idPageUi))
             {
-                PageUiModel pageUiModel = await _pageUiService.GetPageUiById(Convert.ToInt32(idPageUi));
+                pageUiModel = await _pageUiService.GetPageUiById(Convert.ToInt32(idPageUi));
                 if (pageUiModel != null)
                 {
                     _paginatedProperties.RecordsPerPage = Convert.ToInt32(pageUiModel.ItemsPerPage);
                     _paginatedProperties.PageUiModel = pageUiModel;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(term) && !string.IsNullOrEmpty(idPageUi))
+            {
+                if(int.TryParse(term, out int page))
+                {
+                    pageUiModel = await _pageUiService.GetPageUiById(Convert.ToInt32(idPageUi));
+
+                    ShowModel model = new ShowModel();
+                   
+                
+                    model.RecordsPerPage = Convert.ToInt32(pageUiModel.ItemsPerPage);
+                    model.PageUiModel = pageUiModel;
+
+                    model.Page = page;
+
+                    model = await _authorService.Search(model);
+                    return PartialView("_AuthorsList", model);
                 }
             }
 
