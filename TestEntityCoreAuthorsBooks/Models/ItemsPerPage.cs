@@ -10,5 +10,7 @@ namespace TestEntityCoreAuthorsBooks.Models
         Four = 4,
         [Description("6")]
         Six = 6,
+        [Description("8")]
+        Eight = 8,
     }
 }

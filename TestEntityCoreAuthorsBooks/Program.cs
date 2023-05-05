@@ -42,6 +42,7 @@ services.Configure<IdentityOptions>(options =>
 });
 
 services.AddDependencyInjection();
+
 services.AddRazorPages().AddRazorRuntimeCompilation();
 
 services.AddRazorPages();
@@ -55,6 +56,7 @@ services.AddAuthentication()
                     options.ClientSecret = "1";
                 }
             );
+
 services.AddAuthorization(options =>
 {
 
@@ -78,6 +80,12 @@ services.AddAuthorization(options =>
 
 IWebHostEnvironment environment = builder.Environment;
 
+Configuration.SetBasePath(environment.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+
+
 WebApplication app = builder.Build();
 app.UseStatusCodePages();
 
@@ -100,6 +108,7 @@ app.UseRouting();
 
 app.UseCookiePolicy();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
