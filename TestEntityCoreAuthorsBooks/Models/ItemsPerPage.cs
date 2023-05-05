@@ -1,16 +1,22 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel;
 
 namespace TestEntityCoreAuthorsBooks.Models
 {
-    public enum ItemsPerPage
+    public class ItemsPerPage
     {
-        [Description("2")]
-        Two = 2,
-        [Description("4")]
-        Four = 4,
-        [Description("6")]
-        Six = 6,
-        [Description("8")]
-        Eight = 8,
+        public ItemsPerPage()
+        {
+            List<string> list = new List<string>();
+            list.Add("2");
+            list.Add("4");
+            list.Add("6");
+            list.Add("8");
+
+            ListItems = new SelectList(list);
+        }
+
+        public SelectList ListItems { get; }
+        
     }
 }

@@ -28,9 +28,9 @@
                 <label class="form-label">Items Per Page:</label>
             </div>
 
-            <div class="col-sm-2">
+            <div class="col-sm-1">
                 <select asp-for="ItemsPerPage" id="perpage" name="perpage" class="form-control"
-                        asp-items="Html.GetEnumSelectList<ItemsPerPage>()">
+                        asp-items="Model.ItemsPerPage.ListItems">
                 </select>
             </div>
 

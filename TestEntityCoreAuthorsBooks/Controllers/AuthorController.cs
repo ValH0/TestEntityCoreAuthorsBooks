@@ -202,32 +202,35 @@ namespace TestEntityCoreAuthorsBooks.Controllers
                 paginatedProperties.Term = term;
             }
             
-
             _paginatedProperties = await _authorService.Search(paginatedProperties);
 
-            _paginatedProperties.RecordsPerPage = (int)paginatedProperties.ItemsPerPage;
-
             PageUiModel pageUiModel = null;
-
-            if (string.IsNullOrEmpty(term) && !string.IsNullOrEmpty(idPageUi))
+            if (!string.IsNullOrEmpty(idPageUi))
             {
                 pageUiModel = await _pageUiService.GetPageUiById(Convert.ToInt32(idPageUi));
-                if (pageUiModel != null)
-                {
-                    _paginatedProperties.RecordsPerPage = Convert.ToInt32(pageUiModel.ItemsPerPage);
-                    _paginatedProperties.PageUiModel = pageUiModel;
-                }
+            }
+            else
+            {
+                throw new Exception("idPageUi is null or empty");
+            }
+
+            if(pageUiModel != null)
+            {
+                _paginatedProperties.RecordsPerPage = Convert.ToInt32(pageUiModel.ItemsPerPage);
+            }
+
+            if (string.IsNullOrEmpty(term) && pageUiModel != null)
+            {               
+                _paginatedProperties.RecordsPerPage = Convert.ToInt32(pageUiModel.ItemsPerPage);
+                _paginatedProperties.PageUiModel = pageUiModel;            
             }
 
             if (!string.IsNullOrEmpty(term) && !string.IsNullOrEmpty(idPageUi))
             {
                 if(int.TryParse(term, out int page))
                 {
-                    pageUiModel = await _pageUiService.GetPageUiById(Convert.ToInt32(idPageUi));
-
                     ShowModel model = new ShowModel();
-                   
-                
+                                
                     model.RecordsPerPage = Convert.ToInt32(pageUiModel.ItemsPerPage);
                     model.PageUiModel = pageUiModel;
 
@@ -342,11 +345,11 @@ namespace TestEntityCoreAuthorsBooks.Controllers
         [NonAction]
         private int GetItemsPerPage(string perpage)
         {
-            ItemsPerPage itemsPerPage = ItemsPerPage.Two;
-            if (Enum.TryParse<ItemsPerPage>(perpage, true, out itemsPerPage))
-            {}    
+            //ItemsPerPage itemsPerPage = ItemsPerPage.Two;
+            //if (Enum.TryParse<ItemsPerPage>(perpage, true, out itemsPerPage))
+            //{}    
             
-            return (int)itemsPerPage;
+            return Convert.ToInt32(perpage);
         }
     }
 }

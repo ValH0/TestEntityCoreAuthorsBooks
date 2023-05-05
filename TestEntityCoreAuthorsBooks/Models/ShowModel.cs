@@ -6,7 +6,7 @@ namespace TestEntityCoreAuthorsBooks.Models
     {
         public ShowModel() : this(1, 0, 8, 0)
         {
-            //PageUiModel = new PageUiModel();
+            ItemsPerPage = new ItemsPerPage();
         }
 
         public ShowModel(

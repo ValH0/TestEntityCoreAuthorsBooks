@@ -124,8 +124,8 @@ else
     </table>
 }
 
-@*@await Html.PartialAsync("_AuthorsPagedList", Model)*@
-@Html.Partial("_AuthorsPagedList", Model)
+@await Html.PartialAsync("_AuthorsPagedList", Model)
+@*@Html.Partial("_AuthorsPagedList", Model)*@
 
 @{
     int a = Model.RecordsPerPage;
